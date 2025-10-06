@@ -1,0 +1,16 @@
+{
+    "key": "YOUR DISCORD BOT TOKEN HERE",
+    "commands": {
+        "roles": "list_roles",
+        "add": "add_roles",
+        "remove": "remove_roles",
+        "set": "set_roles",
+        "include": "add_to_list"
+    },
+    "roles": {
+        "SERVER ID": {
+            "0": "ROLE ID 1",
+            "1": "ROLE ID 2"
+        }
+    }
+}
