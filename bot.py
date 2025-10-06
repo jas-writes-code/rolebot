@@ -40,7 +40,7 @@ async def add_roles(message, args):
             try:
                 role = message.guild.get_role(int(info["roles"][str(message.guild.id)][str(element)]))
             except KeyError:
-                message.reply("One or more roles not found. Have you checked `!roles`?")
+                await message.reply("One or more roles not found. Have you checked `!roles`?")
             await message.author.add_roles(role)
             content += f"\n{role.name}"
         await message.reply(content)
@@ -57,7 +57,11 @@ async def remove_roles(message, args):
             return
         content = "Removed the following roles from your profile:"
         for element in args:
-            role = message.guild.get_role(int(info["roles"][str(message.guild.id)][str(element)]))
+            try:
+                role = message.guild.get_role(int(info["roles"][str(message.guild.id)][str(element)]))
+            except KeyError:
+                await message.reply("One or more roles not found. Have you checked `!roles`?")
+            await message.author.add_roles(role)
             await message.author.remove_roles(role)
             content += f"\n{role.name}"
         await message.reply(content)
