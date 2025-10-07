@@ -11,15 +11,19 @@ key = config["key"]
 async def list_roles(message, discard):
     async with message.channel.typing():
         guild = client.get_guild(int(message.guild.id))
-        content = "**Configured response roles for this server:**"
+        content = "**Configured responsive roles for this server:**"
         count = 0
         with open('config.json', 'r') as f:
             info = json.load(f)
         roles_data = info.get("roles", {}).get(str(message.guild.id), {})
         for item, role_id in roles_data.items():
+            users = 0
+            for member in message.guild.members:
+                if message.guild.get_role(int(role_id)) in member.roles:
+                    users += 1
             role = guild.get_role(int(role_id))
             role_name = role.name if role else "Unknown Role"
-            content += f"\n**{item}**: {role_name} ({role.id})"
+            content += f"\n**{item}**: {role_name} ({users} people)"
             count += 1
         if count == 0:
             content += "\nNo roles configured."
@@ -82,7 +86,7 @@ async def add_to_list(message, args):
         existing_role_ids = set(existing_roles.values())
         duplicates = [role_id for role_id in args if role_id in existing_role_ids]
         if duplicates:
-            content += f"The following roles already exist and were not added: "
+            content += f"The following role(s) already exist and were not added: "
             for element in duplicates:
                 role = message.guild.get_role(int(element))
                 content += f"\n{role.name}"
@@ -100,8 +104,13 @@ async def add_to_list(message, args):
         config["roles"][guild_id] = existing_roles
         with open("config.json", "w") as f:
             json.dump(config, f, indent=4)
-            content += f"\nAdded **{len(args) - len(duplicates)}** new responsive roles to **{message.guild.name}**. "
-            content += f"Total roles configured: **{len(existing_roles)}**. Use !roles for more info"
+            content += f"\nAdded the following role(s) to **{message.guild.name}**:"
+            for element in args:
+                if element in existing_role_ids:
+                    continue
+                item = message.guild.get_role(int(element))
+                content += f"\n{item.name}"
+            content += f"\nTotal roles configured: **{len(existing_roles)}**. Use !roles for more info"
         await message.reply(content)
 
 async def set_roles(message, args):
