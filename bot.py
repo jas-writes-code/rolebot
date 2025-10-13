@@ -137,8 +137,14 @@ async def set_roles(message, args):
         count = 0
         await message.reply("Updating config...")
         for element in args:
-            payload[str(count)] = element
-            count += 1
+            item = message.guild.get_role(int(element))
+            if item:
+                await item.edit(mentionable=True)
+                payload[str(count)] = element
+                count += 1
+            else:
+                await message.channel.send(f"Role not found: {element}")
+                continue
         if "roles" not in config:
             config["roles"] = {}
         config["roles"][str(message.guild.id)] = payload
