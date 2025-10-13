@@ -109,6 +109,7 @@ async def add_to_list(message, args):
                 if element in existing_role_ids:
                     continue
                 item = message.guild.get_role(int(element))
+                await item.edit(mentionable=True)
                 content += f"\n{item.name}"
             content += f"\nTotal roles configured: **{len(existing_roles)}**. Use !roles for more info"
         await message.reply(content)
